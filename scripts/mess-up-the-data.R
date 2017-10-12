@@ -41,7 +41,7 @@ precip_d <- precip_d %>%
 dir.create(file.path('data', 'messy'))
 precip_d %>%
   split(.$year) %>%
-  map(~select(.x, -STATION) %>% 
+  map(~select(.x, -year) %>% 
         write.csv(file = file.path('data', 'messy',
                                    paste0('My_Data', 
                                           unique(.x$year), 
