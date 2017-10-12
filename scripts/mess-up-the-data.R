@@ -52,4 +52,4 @@ precip_d %>%
 
 # push to amazing web services S3
 # make sure that you have installed configured the AWS CLI with your credentials
-system('aws s3 cp data/messy/ s3://earthlab-teaching/vchm/ --recursive')
+system('aws s3 cp data/messy/ s3://earthlab-teaching/vchm/ --recursive --acl public-read')
