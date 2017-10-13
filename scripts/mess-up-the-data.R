@@ -9,7 +9,8 @@ precip_d <- "https://ndownloader.figshare.com/files/7270970" %>%
 # randomly replace missing values with various missing entries
 is_missing <- is.na(precip_d$HPCP)
 num_missing <- sum(is_missing)
-possible_na_vals <- c(999.99, 'missing', 'n/a')
+possible_na_vals <- c(999.99, 'missing', 'n/a', ' ')
+set.seed(1235)
 na_replacements <- sample(possible_na_vals, size = num_missing, replace = TRUE)
 precip_d$HPCP[is_missing] <- na_replacements
 
