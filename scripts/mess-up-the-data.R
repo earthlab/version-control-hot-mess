@@ -26,17 +26,6 @@ possible_station_names <- c(
 precip_d <- precip_d %>%
   mutate(STATION_NAME = sample(possible_station_names, n(), replace = TRUE))
 
-# randomly choose between date-time formats
-possible_date_formats <- c("%d/%m/%y %H:%M:%OS", 
-                           "%d-%m-%Y %H:%M:%OS")
-precip_d <- precip_d %>%
-  mutate(DATE = format(precip_d$DATE, 
-                       sample(possible_date_formats, 
-                              n(), 
-                              replace = TRUE)
-                       )
-         )
-
 # split into yearly files and save out a csv file for each year
 dir.create(file.path('data', 'messy'))
 precip_d %>%
