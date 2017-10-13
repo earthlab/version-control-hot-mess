@@ -1,41 +1,229 @@
 library(ggplot)
-library(ggplot2)
-library(lubridate)
-library(dplyr)
-
-# cause we love paths to other people's computers a lot
-setwd("~/Documents/github/1_teaching_repos/version-control-hot-mess")
-
-options(stringsAsFactors = FALSE)
-
-check_create_dir <- function(a_dir_path){
-  # This function checks to see if a dir exists and if it doesnt it makes it
-  if (!dir.exists(a_dir_path)) {
-    dir.create(a_dir_path, recursive = TRUE)
-  }
-}
 
 
-# load the data
-boulder_precip <- read.csv("https://ndownloader.figshare.com/files/7270970")
 
-# fix the date
-boulder_precip <- boulder_precip %>%
-  mutate(DATE = as.POSIXct(DATE, format = "%Y%m%d %H:%M"))
+#### Begin hot mess
+
+myDATA <- read.csv("https://s3-us-west-2.amazonaws.com/earthlab-teaching/vchm/My_Data2003.csv")
+#uh oh -- why are things messed up? 
+head(myDATA)
+
+# i really want to create a nice dataframe that summaizes rainfall by month in mm.
+# so let's see how this goes. 
+#year
+library(stringr)
+a_year <- myDATA %>%
+   mutate(DATE = gsub("/", "-", DATE),
+          DATE = ) %>% 
+    mutate(DATE2 = as.POSIXct(DATE, format = "%d-%m-%y %H:%M"),
+           DATE3 = as.POSIXct(DATE, format = "%d-%m-%Y %H:%M"))
+
+# a_year$DATE2 <- gsub("(.*)-(..)$", "\\1-20\\2", a_year$DATE)
+
+# fix the year with regex 
+gsub("(.*)-(..)$", "\\1-20\\2", vec1)
+
+gsub("(.*)/(..)$", "\\1/19\\2", vec1)
+# the dates are all messed up. who made this data? seriously?
+myDATA$DATE
+
+# i don't think this worked but who knows
+as_2003 <- a_year %>% 
+  mutate(precip_mm = HPCP * 25.4,
+         month = month(DATE))
+
+write.csv(as_2003,"data/outputs/precip_2003.csv")
 
 
-min_yr <- min(year(boulder_precip$DATE))
-max_yr <- max(year(boulder_precip$DATE))
+write.csv(a_year, file = "data/annual/precip-2003.csv")
 
-#this does stuff 
-check_create_dir("data/annual/")
-#make all the things
-for (the_year in min_yr:max_yr) {
-  a_year <- boulder_precip %>%
-    filter(year(DATE) == the_year) %>%
+#year
+a_year <- boulder_precip %>%
+    filter(year(DATE) == 2004) %>%
     mutate(month = month(DATE))
-  write.csv(a_year, file = paste0("data/annual/precip-", the_year, ".csv"))
-}
+
+write.csv(a_year, file = "data/annual/precip-2003.csv")
+
+library(ggplot2)
+#year
+a_year <- boulder_precip %>%
+    filter(year(DATE) == 2005) %>%
+    mutate(month = month(DATE))
+
+write.csv(a_year, file = "data/annual/precip-2003.csv")
+
+#year
+a_year <- boulder_precip %>%
+    filter(year(DATE) == 2005) %>%
+    mutate(month = month(DATE))
+
+write.csv(a_year, file = "data/annual/precip-2006.csv")
+#year
+a_year <- boulder_precip %>%
+    filter(year(DATE) == 2003) %>%
+    mutate(month = month(DATE))
+
+write.csv(a_year, file = "data/annual/precip-2007.csv")
+#year
+a_year <- boulder_precip %>%
+    filter(year(DATE) == 2003) %>%
+    mutate(month = month(DATE))
+
+write.csv(a_year, file = "data/annual/precip-2008.csv")
+#year
+
+myDATA <- read.csv("https://s3-us-west-2.amazonaws.com/earthlab-teaching/vchm/My_Data2003.csv")
+
+# group_by, mutate(), summarise, gather(), filter, select -- starts_with, ends_with, %in%
+# sending to ggplot, writecsv, readcsv --> pipes
+# readr::read_csv vs read.csv() 
+
+# aggregate(myDATA
+          
+myFinalData <- myDATA
+unique(myFinalData$HPCP)
+#na values
+myDATA <- read.csv("https://s3-us-west-2.amazonaws.com/earthlab-teaching/vchm/My_Data2003.csv", 
+                   na.strings = c("999.99"))
+myFinalData <- myDATA
+unique(myFinalData$HPCP)
+myFinalData$DATE2 = as.POSIXct(myFinalData$DATE, format = "%Y-%d-%m %H:%M")
+myFinalData$year <- substr(myFinalData$DATE, 1, 4)
+myFinalData$month <- substr(myFinalData$DATE, 6, 7)
+myFinalData = myFinalData[myFinalData$year == "2003",]
+
+#myFinalData$month <- month(myFinalData$DATE)
+#summary mean dataframe 2003
+finalSUMMARYmean <- data.frame(jan_mean_2003 = mean(myFinalData$HPCP[myFinalData$month == "01"], na.rm = TRUE),
+                           feb_mean_2003 = mean(myFinalData$HPCP[myFinalData$month == "02"], na.rm = TRUE),
+                           march_mean_2003 = mean(myFinalData$HPCP[myFinalData$month == "03"], na.rm = TRUE),
+                           apr_mean_2003 = mean(myFinalData$HPCP[myFinalData$month == "04"], na.rm = TRUE),
+                           may_mean_2003 = mean(myFinalData$HPCP[myFinalData$month == "05"], na.rm = TRUE),
+                           june_mean_2003 = mean(myFinalData$HPCP[myFinalData$month == "05"], na.rm = TRUE),
+                           may_mean_2003 = mean(myFinalData$HPCP[myFinalData$month == "06"], na.rm = TRUE),
+                           july_mean_2003 = mean(myFinalData$HPCP[myFinalData$month == "07"], na.rm = TRUE),
+                           aug_mean_2003 = mean(myFinalData$HPCP[myFinalData$month == "08"], na.rm = TRUE),
+                           sept_mean_2003 = mean(myFinalData$HPCP[myFinalData$month == "09"], na.rm = TRUE),
+                           oct_mean_2003 = mean(myFinalData$HPCP[myFinalData$month == "09"], na.rm = TRUE),
+                           nov_mean_2003 = mean(myFinalData$HPCP[myFinalData$month == "11"], na.rm = TRUE),
+                           dec_mean_2003 = mean(myFinalData$HPCP[myFinalData$month == "12"], na.rm = TRUE))
+
+finalSUMMARYmean
+
+
+### 2004 - easy enough 
+#i'd like a snack
+
+#na values
+myDATA <- read.csv("https://s3-us-west-2.amazonaws.com/earthlab-teaching/vchm/My_Data2004.csv", 
+                   na.strings = c("999.99"))
+unique(myFinalData$HPCP)
+myDATA <- read.csv("https://s3-us-west-2.amazonaws.com/earthlab-teaching/vchm/My_Data2004.csv", 
+                   na.strings = c(" ", "999.99", "missing", "n/a"))
+unique(myDATA$HPCP)
+
+myDATA$DATE2 = as.POSIXct(myDATA$DATE, format = "%Y-%d-%m %H:%M")
+myDATA$year <- substr(myDATA$DATE, 1, 4)
+myDATA$month <- substr(myDATA$DATE, 6, 7)
+myDATA = myDATA[myDATA$year == "2004",]
+
+jan_mean_2003 = mean(myFinalData$HPCP[myFinalData$month == "01"], na.rm = TRUE)
+
+#myFinalData$month <- month(myFinalData$DATE)
+#summary mean dataframe 2003
+finalSUMMARYmean$jan_mean_2004 <- mean(myDATA$HPCP[myFinalData$month == "01"], na.rm = TRUE)
+finalSUMMARYmean$feb_mean_2004 <- mean(myDATA$HPCP[myFinalData$month == "02"], na.rm = TRUE)
+finalSUMMARYmean$march_mean_2004 <-mean(myDATA$HPCP[myFinalData$month == "03"], na.rm = TRUE)
+finalSUMMARYmean$apr_mean_2004 = mean(myDATA$HPCP[myFinalData$month == "04"], na.rm = TRUE)
+finalSUMMARYmean$may_mean_2004 = mean(myDATA$HPCP[myFinalData$month == "05"], na.rm = TRUE)
+finalSUMMARYmean$june_mean_2004 = mean(myDATA$HPCP[myFinalData$month == "05"], na.rm = TRUE)
+finalSUMMARYmean$may_mean_2004 = mean(myDATA$HPCP[myFinalData$month == "06"], na.rm = TRUE)
+finalSUMMARYmean$july_mean_2004 = mean(myDATA$HPCP[myFinalData$month == "07"], na.rm = TRUE)
+finalSUMMARYmean$aug_mean_2004 = mean(myDATA$HPCP[myFinalData$month == "08"], na.rm = TRUE)
+finalSUMMARYmean$sept_mean_2004 = mean(myDATA$HPCP[myFinalData$month == "09"], na.rm = TRUE)
+finalSUMMARYmean$oct_mean_2004 = mean(myDATA$HPCP[myFinalData$month == "09"], na.rm = TRUE)
+finalSUMMARYmean$nov_mean_2004 = mean(myDATA$HPCP[myFinalData$month == "11"], na.rm = TRUE)
+finalSUMMARYmean$dec_mean_2004 = mean(myDATA$HPCP[myFinalData$month == "12"], na.rm = TRUE)
+
+finalSUMMARYmean
+
+
+
+#na values
+#2005 - my fingers are tired. may start lifting finger weights to help with endurance.
+myDATA <- read.csv("https://s3-us-west-2.amazonaws.com/earthlab-teaching/vchm/My_Data2005.csv", 
+                   na.strings = c("999.99"))
+unique(myFinalData$HPCP)
+myDATA <- read.csv("https://s3-us-west-2.amazonaws.com/earthlab-teaching/vchm/My_Data2005.csv", 
+                   na.strings = c(" ", "999.99", "missing", "n/a"))
+unique(myDATA$HPCP)
+
+myDATA$DATE2 = as.POSIXct(myDATA$DATE, format = "%Y-%m-%d %H:%M")
+myDATA$year <- substr(myDATA$DATE, 1, 4)
+myDATA$month <- substr(myDATA$DATE, 6, 7)
+myDATA = myDATA[myDATA$year == "2005",]
+
+#myFinalData$month <- month(myFinalData$DATE)
+#summary mean dataframe 2003
+finalSUMMARYmean$jan_mean_2005 <- mean(myDATA$HPCP[myFinalData$month == "01"], na.rm = TRUE)
+finalSUMMARYmean$feb_mean_2005 <- mean(myDATA$HPCP[myFinalData$month == "02"], na.rm = TRUE)
+finalSUMMARYmean$march_mean_2005 <-mean(myDATA$HPCP[myFinalData$month == "03"], na.rm = TRUE)
+finalSUMMARYmean$apr_mean_2005 = mean(myDATA$HPCP[myFinalData$month == "04"], na.rm = TRUE)
+finalSUMMARYmean$may_mean_2005 = mean(myDATA$HPCP[myFinalData$month == "05"], na.rm = TRUE)
+finalSUMMARYmean$june_mean_2005 = mean(myDATA$HPCP[myFinalData$month == "05"], na.rm = TRUE)
+finalSUMMARYmean$may_mean_2005 = mean(myDATA$HPCP[myFinalData$month == "06"], na.rm = TRUE)
+finalSUMMARYmean$july_mean_2005 = mean(myDATA$HPCP[myFinalData$month == "07"], na.rm = TRUE)
+finalSUMMARYmean$aug_mean_2005 = mean(myDATA$HPCP[myFinalData$month == "08"], na.rm = TRUE)
+finalSUMMARYmean$sept_mean_2005 = mean(myDATA$HPCP[myFinalData$month == "09"], na.rm = TRUE)
+finalSUMMARYmean$oct_mean_2005 = mean(myDATA$HPCP[myFinalData$month == "09"], na.rm = TRUE)
+finalSUMMARYmean$nov_mean_2005 = mean(myDATA$HPCP[myFinalData$month == "11"], na.rm = TRUE)
+finalSUMMARYmean$dec_mean_2005 = mean(myDATA$HPCP[myFinalData$month == "12"], na.rm = TRUE)
+
+finalSUMMARYmean
+
+
+#na values
+#2006 - i need a nap and some cookies. preferably oreos altho vanilla wafers could be nice
+myDATA <- read.csv("https://s3-us-west-2.amazonaws.com/earthlab-teaching/vchm/My_Data2006.csv", 
+                   na.strings = c("999.99"))
+unique(myFinalData$HPCP)
+myDATA <- read.csv("https://s3-us-west-2.amazonaws.com/earthlab-teaching/vchm/My_Data2006.csv", 
+                   na.strings = c(" ", "999.99", "missing", "n/a"))
+unique(myDATA$HPCP)
+
+myDATA$DATE2 = as.POSIXct(myDATA$DATE, format = "%Y-%m-%d %H:%M")
+myDATA$year <- substr(myDATA$DATE, 1, 4)
+myDATA$month <- substr(myDATA$DATE, 6, 7)
+myDATA = myDATA[myDATA$year == "2006",]
+
+#myFinalData$month <- month(myFinalData$DATE)
+#summary mean dataframe 2003
+finalSUMMARYmean$jan_mean_2006 <- mean(myDATA$HPCP[myFinalData$month == "01"], na.rm = TRUE)
+finalSUMMARYmean$feb_mean_2006 <- mean(myDATA$HPCP[myFinalData$month == "02"], na.rm = TRUE)
+finalSUMMARYmean$march_mean_2006 <-mean(myDATA$HPCP[myFinalData$month == "03"], na.rm = TRUE)
+finalSUMMARYmean$apr_mean_2006 = mean(myDATA$HPCP[myFinalData$month == "04"], na.rm = TRUE)
+finalSUMMARYmean$may_mean_2006 = mean(myDATA$HPCP[myFinalData$month == "05"], na.rm = TRUE)
+finalSUMMARYmean$june_mean_2006 = mean(myDATA$HPCP[myFinalData$month == "05"], na.rm = TRUE)
+finalSUMMARYmean$may_mean_2006 = mean(myDATA$HPCP[myFinalData$month == "06"], na.rm = TRUE)
+finalSUMMARYmean$july_mean_2006 = mean(myDATA$HPCP[myFinalData$month == "07"], na.rm = TRUE)
+finalSUMMARYmean$aug_mean_2006 = mean(myDATA$HPCP[myFinalData$month == "08"], na.rm = TRUE)
+finalSUMMARYmean$sept_mean_2006 = mean(myDATA$HPCP[myFinalData$month == "09"], na.rm = TRUE)
+finalSUMMARYmean$oct_mean_2006 = mean(myDATA$HPCP[myFinalData$month == "09"], na.rm = TRUE)
+finalSUMMARYmean$nov_mean_2006 = mean(myDATA$HPCP[myFinalData$month == "11"], na.rm = TRUE)
+finalSUMMARYmean$dec_mean_2006 = mean(myDATA$HPCP[myFinalData$month == "12"], na.rm = TRUE)
+
+finalSUMMARYmean
+
+write.csv(a_year, file = "finalSUMMARYmean.csv")
+
+
+
+
+
+
+
+
+
 
 
 
