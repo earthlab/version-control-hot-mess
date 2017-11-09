@@ -2,32 +2,54 @@ library(ggplot)
 
 
 
-#### Begin hot mess
+#### Commence analysis
 
 myDATA <- read.csv("https://s3-us-west-2.amazonaws.com/earthlab-teaching/vchm/My_Data2003.csv")
 #uh oh -- why are things messed up? 
 head(myDATA)
 
+
 # i really want to create a nice dataframe that summaizes rainfall by month in mm.
 # so let's see how this goes. 
 #year
-library(stringr)
-a_year <- myDATA %>%
-   mutate(DATE = gsub("/", "-", DATE),
-          DATE = ) %>% 
-    mutate(DATE2 = as.POSIXct(DATE, format = "%d-%m-%y %H:%M"),
-           DATE3 = as.POSIXct(DATE, format = "%d-%m-%Y %H:%M"))
+
+# First I need to amek srue that the DATE column is a Date!!!
+myDATA$dateasdate <- as.Date(myDATA$DATE)
+str(myDATA) # check to make sure that the date column is a date
+
+# Then I want to make sure that I have a column that is the month and another one that is year
+myDATA$Month <- lubridate::month(myDATA$dateasdate)
+str(myDATA) # check to make sure that the date column is a date
+
+# Then I want to have a YEAR column that is the YEAR
+myDATA$year <- lubridate::year(myDATA$dateasdate)
+str(myDATA) # check to make sure that the date column is a date
+
+#myDATA$DOY <- as.numeric(strftime(myDATA$dateasdate, format = "%j"))
+#
+# library(stringr)
+# a_year <- myDATA %>%
+#    mutate(DATE = gsub("/", "-", DATE),
+#           DATE = ) %>% 
+#     mutate(DATE2 = as.POSIXct(DATE, format = "%d-%m-%y %H:%M"),
+#            DATE3 = as.POSIXct(DATE, format = "%d-%m-%Y %H:%M"))
 
 # a_year$DATE2 <- gsub("(.*)-(..)$", "\\1-20\\2", a_year$DATE)
 
 # fix the year with regex 
-gsub("(.*)-(..)$", "\\1-20\\2", vec1)
-
-gsub("(.*)/(..)$", "\\1/19\\2", vec1)
-# the dates are all messed up. who made this data? seriously?
-myDATA$DATE
-
+# gsub("(.*)-(..)$", "\\1-20\\2", vec1)
+# 
+# gsub("(.*)/(..)$", "\\1/19\\2", vec1)
+# # the dates are all messed up. who made this data? seriously?
+# myDATA$DATE
 # i don't think this worked but who knows
+
+
+# Finally, I want to save a CSV file has precip in mm
+d2003 <- myDATA[myDATA[[12]] == 2003]
+d2003$precip_MM = myDATA$HPCP * 25.4
+write.csv(file = 'data/outputs/precip_2003.csv', x = d2003, row.names = FALSE)
+
 as_2003 <- a_year %>% 
   mutate(precip_mm = HPCP * 25.4,
          month = month(DATE))
@@ -71,15 +93,21 @@ a_year <- boulder_precip %>%
 
 write.csv(a_year, file = "data/annual/precip-2008.csv")
 #year
+# I don't think that worked we will do it again but without error
 
+
+
+
+
+
+
+#==============================================================================
+#==============================================================================
+#STRATEGY: going to calculate monthly averages of precipitation for each dataset
+# (each year!) using R
+#==============================================================================
+#==============================================================================
 myDATA <- read.csv("https://s3-us-west-2.amazonaws.com/earthlab-teaching/vchm/My_Data2003.csv")
-
-# group_by, mutate(), summarise, gather(), filter, select -- starts_with, ends_with, %in%
-# sending to ggplot, writecsv, readcsv --> pipes
-# readr::read_csv vs read.csv() 
-
-# aggregate(myDATA
-          
 myFinalData <- myDATA
 unique(myFinalData$HPCP)
 #na values
@@ -179,7 +207,7 @@ finalSUMMARYmean$oct_mean_2005 = mean(myDATA$HPCP[myFinalData$month == "09"], na
 finalSUMMARYmean$nov_mean_2005 = mean(myDATA$HPCP[myFinalData$month == "11"], na.rm = TRUE)
 finalSUMMARYmean$dec_mean_2005 = mean(myDATA$HPCP[myFinalData$month == "12"], na.rm = TRUE)
 
-finalSUMMARYmean
+finalSUMMARYmean#mostly working I guess will fix later
 
 
 #na values
@@ -212,7 +240,7 @@ finalSUMMARYmean$oct_mean_2006 = mean(myDATA$HPCP[myFinalData$month == "09"], na
 finalSUMMARYmean$nov_mean_2006 = mean(myDATA$HPCP[myFinalData$month == "11"], na.rm = TRUE)
 finalSUMMARYmean$dec_mean_2006 = mean(myDATA$HPCP[myFinalData$month == "12"], na.rm = TRUE)
 
-finalSUMMARYmean
+finalSUMMARYmean# Workikng better now!
 
 write.csv(a_year, file = "finalSUMMARYmean.csv")
 
@@ -229,6 +257,17 @@ write.csv(a_year, file = "finalSUMMARYmean.csv")
 
 
 #start my analysis
+# =============================================================================
+# FIGURES FOR THE VISUALIZATION OF PRECIPITATION IN BOULDER COUNTY FROM THE 
+# YEARS 2003 THROUGH 2010 - WE ARE GOING TO PLOT THE MONTHLY MEANS OVER TIME
+# TO SEE WHETHER THERE ARE LONG TERM CHANGES IN PRECIPITATION ALL OF THE PLOTS
+# SHOULD BE ON THE SAME PANEL - I ONLY WANT TO COLOR THE LINES TO INDICATE
+# YEAR AND THE X AXIS IS MONTH AND THE Y AXIS IS AVERAGE WATER
+# =============================================================================
+# LAST MODIFIED ON NOVEMBER 9 2017 BY MAX JOSEPH
+# PRETTY SURE THIS WORKS BUT NO GUARANTEES
+
+
 read.csv("data/annual/precip-2003.csv")
 plot(data)
 
@@ -242,7 +281,7 @@ my.data <-read.csv("data/week_06/outputs/precip_mm/precip-2007.csv")
 my.data$newcolumn <- mydata$precip * 12 / 2
 my.data <-read.csv("data/week_06/outputs/precip_mm/precip-20010.csv")
 my.data$newcolumn <- mydata$precip * 12 / 2
-plot(mydata)
+lines(mydata)
 #export stuff -  i should do this for all of my csv files
 write.csv(mydata)
 
@@ -326,3 +365,4 @@ write.csv(mydata)
 
 library(dplyr)
 library(ggplot2)
+
