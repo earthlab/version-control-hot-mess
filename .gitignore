@@ -1,6 +1,3 @@
-# ignore data files
-*.csv
-
 # R Project files
 *.Rproj
 
