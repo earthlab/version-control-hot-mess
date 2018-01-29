@@ -22,21 +22,7 @@ This workshop will get students to think about best practices when coding includ
 * instructions to create an `R project` using git repo
 
 # Lesson 01
-## Part 1 - 40 minutes?
-
-### A. Mini lecture on the four components of clean coding
-
-1. **Syntax**
-2. **Modularity** can the function work in various scenarios?
-3. **Documentation**
-4. **Expressiveness**
-
-* Link to the course materials too in suggested reading
-* Link to anything else that Max thinks we should!
-
-# Lesson 02 - Group Activity
-
-## Small group activity. 15 mins
+## Group Activity - 15-20 minutes
 
 1. **Print out a copy of the code** (or post it on the website) for students to explore
 2. Students break out into groups of 2-3 and identify problems they see in the code.
@@ -53,27 +39,67 @@ on the white board fill out the things students found could be improved with the
 ### Activity Approach
 
 * Have them enter this in a google doc.
+* +1 for things they agree with
 * Then instructors go through each section and discuss as a group.
 
-Discussion Time: 5-10 minutes
+Discussion Time: 20 minutes
+Discussion topics:
 
-# Lesson 03 - An Approach to Structuring Clean Code
+1. **Syntax**
+2. **Modularity** can the function work in various scenarios?
+3. **Documentation**
+4. **Expressiveness**
+
+* Link to the course materials & other resources
+* Identify a style guide that we wish to use (link to style.tidyverse.org)
+
+# Lesson 02 - Summarize Data
+
+**TIME:** 15 minutes
+
+Explore your data
+
+* What's the length of record for each STATION_NAME  calculate the total number of days?
+
+* Write out what you want to do in ENGLISH
+  * we then get their feedback and write it on the board in steps
+* Then convert to code
+  * convert each step above to a line of Code
+  * Introduce pipes
+
+* group_by
+* summarise()
+
+group by station_NAME, Calculate difference...
+output: data.frame
+
+## A Bigger Picture - Structuring Clean Code
+
+Use the "messy code" to begin to organize and develop an approach via pseudo code.
 
 Concepts to Introduce:
 
 * What is pseudo code and why is it valuable?
-* What is tidyverse - emphasis on data.frames
+* What is tidyverse - emphasis on `data.frames`
 * How do you translate pseudo code to code
 
 ## A Process for Organizing Your Code
 
 * Write out the steps together as a group required to get to the end goal.
-* Identify the tasks that are repeated.
-* Identify a style guide that we wish to use (link to style.tidyverse.org) / discuss contributing files in git repos if they are working with others...
+* * translate them to R Syntax
+* Use pipes and tidyverse to minimize outputs of individual steps & for Expressiveness
 
 #### Code Steps
 
+Some kind of conceptual drawing... or diagram that breaks this down ??
 I need to review what the code actually does but something like:
+
+
+**OYO**
+
+Create a plot of precipitation by month
+
+(show that they can pipe to ggplot)
 
 * open file
 * Add month column
@@ -108,15 +134,18 @@ plot x by month ...
 * cleanup NA values
 * mutate to add a column
 
-<<END LESSON 3 >>
+<<END LESSON 2 >>
 
-# Lesson 4 - Loops
+# Lesson 3 - Loops
 
 ## About Loops
 
 ## How to loop through files
 
-Goal is plot by month and site
+Ultimate goal: plot by month and site
+First step: get all of the files into one data.frame for easy manipulation
+
+Ask the group: how would you do it?
 
 * Open the .csv that has all paths to amazon S3 where data are stored
 * loop through each path... print the path name
@@ -125,32 +154,30 @@ Build the loop..
 
 Now - build the loop but instead of printing the path, create a list of data.frames:
 
-1. Loop through using `seq_along()` and create a list of dataframes
+1. Loop through using `seq_along()` and create a list of data.frames
 2. `bind_rows` to bind together the entire list into 1 df
 
 
 ### ON YOUR OWN --
 
-Finally - use a pipe to summarize the data in your data.frame.
-HINT
+Finally - use a pipe to summarize the data in your data.frame total precipitation by month.
 
 1. you may want to explore the data before summarizing it. Here are some questions to explore
   * How many unique sites are included in the data.
   * What is the **str**ucture of the columns in the data?
 2. Create a pipe that summarizes the data by month and site
 
+
+### ON YOUR OWN --
+
+Summarize by STATION_NAME, month AND precip
 HINTS to help
 
 * toupper and tolower for tex manipulation
-* group_by() - you can group by several columns
-
-## Plot by SITE and MONTH
+* group_by() - you can group by **several** columns
 
 
-
-### Part 5 plot
-
-Could be example lesson with some simple examples
+# BONUS FUN TIMES WITH GGPLOT
 
 
 ## Future

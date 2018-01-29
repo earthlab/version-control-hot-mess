@@ -35,8 +35,10 @@ year_one %>%
 
 # notice that we need na.rm = TRUE if we want to ignore missing data when 
 # calculating means
+# why does this work above given na.rm = TRUE is removeD??
 
 # next let's try to work with all of the data
+# you will use loops to do this
 for (path in all_paths) {
   print(path)
 }
@@ -62,11 +64,12 @@ all_years_data <- bind_rows(all_data_list)
 #  because we missed some NA string values
 
 
+# next let's look at all of the data to determine what is going on with NA values.
+# we won't specify any NA values so we can determine the complete list of possible NA values
 # Force HPCP to be read as a character ------------------------------------
 all_data_list <- list()
 for (i in (1:nrow(all_paths))) {
   all_data_list[[i]] <- read_csv(all_paths$url[[i]], 
-                                 na = na_vals, 
                                  col_types = cols(HPCP = 'c'))
 }
 
@@ -88,7 +91,7 @@ for (i in (1:nrow(all_paths))) {
 all_years_data <- bind_rows(all_data_list)
 
 # verify that HPCP is a number
-all_years_data
+str(all_years_data)
 
 
 
